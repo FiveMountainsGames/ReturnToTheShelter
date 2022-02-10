@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8102578138831350593}
   - component: {fileID: 8498251725763469704}
-  - component: {fileID: 6662847979298550083}
   - component: {fileID: 2105250285309299957}
   - component: {fileID: 2212159353686646602}
   - component: {fileID: 3214205052532162425}
   - component: {fileID: 6373792863005295911}
+  - component: {fileID: 7220819300996720289}
   m_Layer: 6
   m_Name: Boxes
   m_TagString: Obstacle
@@ -87,22 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!58 &6662847979298550083
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 393004511025775015}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.029999971, y: 0.43702924}
-  serializedVersion: 2
-  m_Radius: 0.7127019
 --- !u!114 &2105250285309299957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,7 +138,7 @@ MonoBehaviour:
   - {x: -0.5782702, y: -0.31667387, z: 0}
   m_ShapePathHash: -1883458248
   m_Mesh: {fileID: 0}
-  m_InstanceId: -18652
+  m_InstanceId: -12410
 --- !u!50 &6373792863005295911
 Rigidbody2D:
   serializedVersion: 4
@@ -176,3 +160,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!70 &7220819300996720289
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393004511025775015}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.071995296, y: 0.22612496}
+  m_Size: {x: 1.7946689, y: 0.9381207}
+  m_Direction: 1

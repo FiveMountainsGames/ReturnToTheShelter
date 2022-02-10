@@ -7,8 +7,9 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] List<GameObject> obstacles;
     [SerializeField] List<GameObject> boosts;
     [SerializeField] List<GameObject> enemies;
-    private float minRange = 0.0f;
-    private float maxRange = 2.0f;
+    [SerializeField] GameObject obstaclesContainer;
+    private int minRange = 0;
+    private int maxRange = 3;
     int countInRow = 0;
     int prevObstacle;
     public float spawnTimeMin;
@@ -71,9 +72,9 @@ public class SpawnManager : MonoBehaviour
     {
         while (!GameManager.Instance.isGameOver)
         {
-            spawnTime = Random.Range(spawnTimeBoostMin, spawnTimeBoostMax);
+            float spawnTimeBoost = Random.Range(spawnTimeBoostMin, spawnTimeBoostMax);
             int isAdrenalineSpawn = Random.Range(0, 5);
-            yield return new WaitForSeconds(spawnTime);
+            yield return new WaitForSeconds(spawnTimeBoost);
 
             Vector3 randomPos = new Vector3(11.0f, Random.Range(minRange, maxRange), 0);
             if (isAdrenalineSpawn == 3)
@@ -91,13 +92,29 @@ public class SpawnManager : MonoBehaviour
     {
         while (!GameManager.Instance.isGameOver)
         {
+
             float spawnTimeEnemy = Random.Range(spawnTimeEnemyMin, spawnTimeEnemyMax);
             int randomEnemy = Random.Range(0, enemies.Count);
-            yield return new WaitForSeconds(spawnTime);
-
-            Vector3 randomPos = new Vector3(11.0f, Random.Range(minRange, maxRange), 0);
-            ObjectPool.Instance.CreateObject(enemies[0], randomPos);
-
+            yield return new WaitForSeconds(spawnTimeEnemy);
+            if (!IsObstacleOnView("tubeSimpleLeft"))
+            {
+                Vector3 randomPos = new Vector3(11.0f, Random.Range(minRange, maxRange), 0);
+                ObjectPool.Instance.CreateObject(enemies[0], randomPos);
+            }
         }
+    }
+
+    bool IsObstacleOnView(string nameObstacle)
+    {
+        int obstaclesCount = obstaclesContainer.transform.childCount;
+        for (int i=0; i < obstaclesCount; i++)
+        {
+            GameObject activeObstacles = obstaclesContainer.transform.GetChild(i).gameObject;
+            if (activeObstacles.activeInHierarchy && activeObstacles.name == nameObstacle)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

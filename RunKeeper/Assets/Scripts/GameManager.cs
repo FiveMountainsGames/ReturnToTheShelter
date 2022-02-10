@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private static GameManager gmInstance;
 
     public float generalSpeed = 1.5f;
+    public float currGeneralSpeed;
     public bool isGameOver = false;
     [SerializeField] Slider progressDistance;
     [SerializeField] TMP_Text cupsText;
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        currGeneralSpeed = generalSpeed;
         //Cursor.SetCursor(cursorPoint, new Vector2(0.5f,0.5f), CursorMode.ForceSoftware);
     }
 
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour
     {
         Timer();
         ProgressDistance();
-
+        GeneralSpeedUp();
     }
 
     void ProgressDistance()
@@ -77,15 +79,24 @@ public class GameManager : MonoBehaviour
             {
                 if (pc.isSpeedUp)
                 {
-                    currDistance += Time.deltaTime * 10 * pc.speedUp;
+                    currDistance += (5 * pc.speedUp * generalSpeed * 60) / 5000;
                 }
                 else
                 {
-                    currDistance += Time.deltaTime * 10;
+                    currDistance += (5 * generalSpeed * 60) / 5000;
                 }
 
                 progressDistance.value = currDistance;
             }
+        }
+    }
+
+    void GeneralSpeedUp()
+    {
+        if (generalSpeed < 2.7f)
+        {
+            generalSpeed += Time.deltaTime / 300;
+            currGeneralSpeed += Time.deltaTime / 300;
         }
     }
 

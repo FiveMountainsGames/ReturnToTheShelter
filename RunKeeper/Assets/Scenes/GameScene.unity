@@ -3882,6 +3882,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   generalSpeed: 1.5
+  currGeneralSpeed: 0
   isGameOver: 0
   progressDistance: {fileID: 640800704}
   cupsText: {fileID: 378020279}
@@ -9246,12 +9247,13 @@ MonoBehaviour:
   - {fileID: 7936331817957899219, guid: 3bc8e09dde6d378498daf9e7f8ee3d9d, type: 3}
   enemies:
   - {fileID: 1964301119309003240, guid: f53172d259f4d914ab728d057c9150c7, type: 3}
-  spawnTimeMin: 1
+  obstaclesContainer: {fileID: 1219262956}
+  spawnTimeMin: 2
   spawnTimeMax: 5
-  spawnTimeBoostMin: 10
-  spawnTimeBoostMax: 30
-  spawnTimeEnemyMin: 5
-  spawnTimeEnemyMax: 10
+  spawnTimeBoostMin: 5
+  spawnTimeBoostMax: 7
+  spawnTimeEnemyMin: 10
+  spawnTimeEnemyMax: 15
 --- !u!4 &1363247118
 Transform:
   m_ObjectHideFlags: 0

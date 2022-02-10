@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             anim.SetBool("isUnderAttack", false);
-            GameManager.Instance.generalSpeed = 1.5f;
+            GameManager.Instance.generalSpeed = GameManager.Instance.currGeneralSpeed;
         }
     }
 
@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviour
             if (isSpeedUp)
             {
                 stamina -= Time.deltaTime * 10;
-                GameManager.Instance.generalSpeed = startGeneralSpeed * speedUp;
+                GameManager.Instance.generalSpeed = GameManager.Instance.generalSpeed * speedUp;
             }
         }
         else
