@@ -25,14 +25,22 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Spawn());
-        StartCoroutine(SpawnBoost());
-        StartCoroutine(SpawnEnemies());
+        StartSpawns(true);
+    }
+
+    public void StartSpawns(bool isStart)
+    {
+        if (isStart)
+        {
+            StartCoroutine(Spawn());
+            StartCoroutine(SpawnBoost());
+            StartCoroutine(SpawnEnemies());
+        }
     }
 
     IEnumerator Spawn()
     {
-        while (!GameManager.Instance.isGameOver)
+        while (!GameManager.Instance.isGameOver && !GameManager.Instance.isPause)
         {
             spawnTime = Random.Range(spawnTimeMin, spawnTimeMax);
 
@@ -70,10 +78,11 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnBoost()
     {
-        while (!GameManager.Instance.isGameOver)
+        while (!GameManager.Instance.isGameOver && !GameManager.Instance.isPause)
         {
             float spawnTimeBoost = Random.Range(spawnTimeBoostMin, spawnTimeBoostMax);
-            int isAdrenalineSpawn = Random.Range(0, 5);
+            int isAdrenalineSpawn = Random.Range(0, 10);
+            int randomBoost = Random.Range(0, boosts.Count);
             yield return new WaitForSeconds(spawnTimeBoost);
 
             Vector3 randomPos = new Vector3(11.0f, Random.Range(minRange, maxRange), 0);
@@ -83,14 +92,14 @@ public class SpawnManager : MonoBehaviour
             }
             else
             {
-                ObjectPool.Instance.CreateObject(boosts[0], randomPos);
+                ObjectPool.Instance.CreateObject(boosts[randomBoost], randomPos);
             }
         }
     }
 
     IEnumerator SpawnEnemies()
     {
-        while (!GameManager.Instance.isGameOver)
+        while (!GameManager.Instance.isGameOver && !GameManager.Instance.isPause)
         {
 
             float spawnTimeEnemy = Random.Range(spawnTimeEnemyMin, spawnTimeEnemyMax);

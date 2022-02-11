@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public float generalSpeed = 1.5f;
     public float currGeneralSpeed;
     public bool isGameOver = false;
+    public bool isPause = false;
     [SerializeField] Slider progressDistance;
     [SerializeField] TMP_Text cupsText;
     [SerializeField] TMP_Text adrenalineText;
@@ -20,13 +21,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] Slider stamina;
     [SerializeField] Slider ammo;
     [SerializeField] Slider magazines;
-    [SerializeField] Texture2D cursorPoint;
     [SerializeField] GameObject statisticsPanel;
     [SerializeField] PlayerController pc;
     [SerializeField] TMP_Text statCups;
     [SerializeField] TMP_Text statDistance;
     [SerializeField] TMP_Text statTime;
-    private float endDistance = 5000;
+    [SerializeField] SpawnManager spManager;
+    private float endDistance = 3000;
     private float currDistance = 0;
     private double startTimerValue = 300.00;
     public TMP_Text timer;
@@ -53,7 +54,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currGeneralSpeed = generalSpeed;
-        //Cursor.SetCursor(cursorPoint, new Vector2(0.5f,0.5f), CursorMode.ForceSoftware);
+        CursorVisible(false);
+
     }
 
     public void GameOver()
@@ -61,14 +63,55 @@ public class GameManager : MonoBehaviour
         generalSpeed = 0;
         isGameOver = true;
         ShowStatistics();
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        CursorVisible(true);
     }
 
     private void Update()
     {
-        Timer();
-        ProgressDistance();
-        GeneralSpeedUp();
+        if (!isPause && !isGameOver)
+        {
+            Timer();
+            ProgressDistance();
+            GeneralSpeedUp();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
+    }
+
+    private void Pause()
+    {
+        if (!isPause)
+        {
+            isPause = true;
+            generalSpeed = 0;
+            CursorVisible(true);
+            ShowStatistics();
+            spManager.StartSpawns(false);
+        }
+        else
+        {
+            isPause = false;
+            generalSpeed = currGeneralSpeed;
+            CursorVisible(false);
+            HideStatistics();
+            spManager.StartSpawns(true);
+        }
+    }
+
+    void CursorVisible(bool isVisible)
+    {
+        if (isVisible)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     void ProgressDistance()
@@ -121,6 +164,11 @@ public class GameManager : MonoBehaviour
         var ts = TimeSpan.FromSeconds(startTimerValue);
         statTime.text = string.Format("{0:00}:{1:00} мин.", ts.Minutes, ts.Seconds);
         statCups.text = pc.cupsValue.ToString();
+    }
+
+    private void HideStatistics()
+    {
+        statisticsPanel.SetActive(false);
     }
 
     public void RestartLevel()

@@ -60,39 +60,34 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (hp <= 0)
+        if (!GameManager.Instance.isPause && !GameManager.Instance.isGameOver)
         {
-            GameManager.Instance.GameOver();
-        }
-        else
-        {
-            GameManager.Instance.SetHP(hp);
-        }
-
-        if (!GameManager.Instance.isGameOver)
-        {
-            PcControls();
-        }
-
-        if (!isGround || isLowDash)
-        {
-            if (stepCor != null)
+            anim.speed = 1;
+            if (hp <= 0)
             {
-                StopCoroutine(stepCor);
-                stepCor = null;
+                GameManager.Instance.GameOver();
+            }
+            else
+            {
+                GameManager.Instance.SetHP(hp);
+            }
+
+            PcControls();
+            UnderAttack();
+            SpeedUp();
+
+            if (!isGround || isLowDash)
+            {
+                if (stepCor != null)
+                {
+                    StopCoroutine(stepCor);
+                    stepCor = null;
+                }
             }
         }
-
-        if (isUnderAttack)
-        {
-            anim.SetBool("isShoot", false);
-            anim.SetBool("isUnderAttack", true);
-            GameManager.Instance.generalSpeed = 0.5f;
-        }
         else
         {
-            anim.SetBool("isUnderAttack", false);
-            GameManager.Instance.generalSpeed = GameManager.Instance.currGeneralSpeed;
+            anim.speed = 0;
         }
     }
 
@@ -113,8 +108,6 @@ public class PlayerController : MonoBehaviour
         {
             isSpeedUp = !isSpeedUp;
         }
-
-        SpeedUp();
 
         if (Input.GetKey(KeyCode.W) && ground.transform.position.y < 2 && isGround && !isLowDash)
         {
@@ -149,14 +142,20 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(Reload());
         }
+    }
 
+    private void UnderAttack()
+    {
         if (isUnderAttack)
         {
+            anim.SetBool("isShoot", false);
             anim.SetBool("isUnderAttack", true);
+            GameManager.Instance.generalSpeed = 0.5f;
         }
         else
         {
             anim.SetBool("isUnderAttack", false);
+            GameManager.Instance.generalSpeed = GameManager.Instance.currGeneralSpeed;
         }
     }
 
@@ -369,6 +368,16 @@ public class PlayerController : MonoBehaviour
             adrenaline++;
             GameManager.Instance.SetAdrenaline(adrenaline);
             ObjectPool.Instance.DeleteObject(collision.gameObject);
+        }
+
+        if (collision.CompareTag("Ammu"))
+        {
+            if (magazines < 5)
+            {
+                magazines++;
+                GameManager.Instance.SetMagazines(magazines);
+                ObjectPool.Instance.DeleteObject(collision.gameObject);
+            }
         }
     }
 

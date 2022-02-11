@@ -31,15 +31,16 @@ public class RatEnemy : MonoBehaviour
         pc.viewEnemy = this.gameObject;
         transform.localPosition = new Vector3(11.0f, Random.Range(0, 2), 0);
         transform.rotation = Quaternion.Euler(0, 0, 0);
+        anim.SetBool("isDead", false);
+        transform.GetComponent<Collider2D>().enabled = true;
     }
 
     private void FixedUpdate()
     {
-        if (!isHitPlayer)
+        float distanceToPlayer = Vector2.Distance(this.gameObject.transform.position, player.transform.position);
+        Vector3 defaultDirection = transform.position + Vector3.left * speed * Time.fixedDeltaTime * GameManager.Instance.generalSpeed;
+        if (!isHitPlayer && hp > 0)
         {
-            float distanceToPlayer = Vector2.Distance(this.gameObject.transform.position, player.transform.position);
-            Vector3 defaultDirection = transform.position + Vector3.left * speed * Time.fixedDeltaTime * GameManager.Instance.generalSpeed;
-
             if (distanceToPlayer > 8)
             {
                 rb.MovePosition(defaultDirection);
@@ -52,16 +53,32 @@ public class RatEnemy : MonoBehaviour
         }
         else
         {
-            transform.rotation = Quaternion.Euler(0, 0, -58);
-            transform.localPosition = new Vector3(0f, 0f, 0);
+            if (pc.isUnderAttack)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, -58);
+                transform.localPosition = new Vector3(0f, 0f, 0);
+            }
         }
 
-        if (transform.position.x < -12 || hp <= 0)
+        if (transform.position.x < -12)
         {
             pc.viewEnemy = null;
             pc.isUnderAttack = false;
             isHitPlayer = false;
             ObjectPool.Instance.DeleteObject(this.gameObject);
+        }
+
+        if (hp <= 0)
+        {
+            transform.parent = null;
+            transform.GetComponent<Collider2D>().enabled = false;
+            pc.viewEnemy = null;
+            pc.isUnderAttack = false;
+            isHitPlayer = false;
+            isSetDamage = false;
+            anim.SetBool("isDead", true);
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            rb.MovePosition(defaultDirection);
         }
     }
 

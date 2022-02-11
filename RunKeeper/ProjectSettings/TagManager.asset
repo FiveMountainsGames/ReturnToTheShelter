@@ -11,6 +11,7 @@ TagManager:
   - Adrenaline
   - Enemy
   - Player_Leg_F
+  - Ammu
   layers:
   - Default
   - TransparentFX

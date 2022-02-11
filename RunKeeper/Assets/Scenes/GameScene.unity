@@ -2555,7 +2555,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 19640026}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 5000
+  m_MaxValue: 3000
   m_WholeNumbers: 0
   m_Value: 0
   m_OnValueChanged:
@@ -3884,6 +3884,7 @@ MonoBehaviour:
   generalSpeed: 1.5
   currGeneralSpeed: 0
   isGameOver: 0
+  isPause: 0
   progressDistance: {fileID: 640800704}
   cupsText: {fileID: 378020279}
   adrenalineText: {fileID: 1103702340}
@@ -3891,12 +3892,12 @@ MonoBehaviour:
   stamina: {fileID: 1548627278}
   ammo: {fileID: 1835251878}
   magazines: {fileID: 718950668}
-  cursorPoint: {fileID: 2800000, guid: 79d4e6cc918501f468223a9698139138, type: 3}
   statisticsPanel: {fileID: 1789870467}
   pc: {fileID: 405941175}
   statCups: {fileID: 1702488749}
   statDistance: {fileID: 1575900953}
   statTime: {fileID: 1788072047}
+  spManager: {fileID: 1363247117}
   timer: {fileID: 458542623}
 --- !u!4 &924094397
 Transform:
@@ -9245,6 +9246,7 @@ MonoBehaviour:
   boosts:
   - {fileID: 6651633098138624333, guid: 8141480e6b457f2488df71142974ded3, type: 3}
   - {fileID: 7936331817957899219, guid: 3bc8e09dde6d378498daf9e7f8ee3d9d, type: 3}
+  - {fileID: 5024653657187851404, guid: 612dfa5336544fd4bae2c818d7d879fd, type: 3}
   enemies:
   - {fileID: 1964301119309003240, guid: f53172d259f4d914ab728d057c9150c7, type: 3}
   obstaclesContainer: {fileID: 1219262956}
@@ -9284,6 +9286,7 @@ MonoBehaviour:
   objectToPoolType1:
   - {fileID: 6651633098138624333, guid: 8141480e6b457f2488df71142974ded3, type: 3}
   - {fileID: 7936331817957899219, guid: 3bc8e09dde6d378498daf9e7f8ee3d9d, type: 3}
+  - {fileID: 5024653657187851404, guid: 612dfa5336544fd4bae2c818d7d879fd, type: 3}
   objectToPoolType2:
   - {fileID: 1360619652873512696, guid: 4cf03512bfac7254598f5ac73675ca6f, type: 3}
   - {fileID: 393004511025775015, guid: 58c2f1391d1e1d045ab3afb4bb63514a, type: 3}
