@@ -9,16 +9,15 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D playerRb;
     private Animator anim;
-    private AudioSource audio;
+    private AudioSource audioSource;
     [SerializeField] ParticleSystem dirtParticles;
     [SerializeField] List<AudioClip> steps;
     [SerializeField] List<AudioClip> fx;
     [SerializeField] Transform shotPoint;
     [SerializeField] LineRenderer shotLine;
     [SerializeField] List<GameObject> hitFX;
-    public GameObject viewEnemy;
 
-    [Range(0, 100)] public int hp = 100;
+    public int hp = 100;
     private int adrenaline = 0;
     private int ammoCount = 7;
     private int magazines = 5;
@@ -27,14 +26,12 @@ public class PlayerController : MonoBehaviour
     private float gravityModifier = 1.5f;
     private float shotDelay;
     public int cupsValue = 0;
-    private float playerDeep = 0.1f;
-    public float speedUp = 1.5f;
     private float stamina = 100;
+    private float viewDistance = 20f;
     private float startGeneralSpeed;
 
     public bool isGround = false;
     private bool isLowDash = false;
-    public bool isSpeedUp = false;
     private bool firstGroundContact = false;
     private bool isReload = false;
     public bool isUnderAttack = false;
@@ -51,7 +48,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         Physics.gravity *= gravityModifier;
         shotDelay = startShotDelay;
         GameManager.Instance.SetCups(cupsValue);
@@ -63,18 +60,9 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.isPause && !GameManager.Instance.isGameOver)
         {
             anim.speed = 1;
-            if (hp <= 0)
-            {
-                GameManager.Instance.GameOver();
-            }
-            else
-            {
-                GameManager.Instance.SetHP(hp);
-            }
-
+            HPControl();
             PcControls();
             UnderAttack();
-            SpeedUp();
 
             if (!isGround || isLowDash)
             {
@@ -97,16 +85,11 @@ public class PlayerController : MonoBehaviour
         {
             firstGroundContact = false;
             playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            audio.PlayOneShot(fx[0]);
+            audioSource.PlayOneShot(fx[0]);
             dirtParticles.Stop();
             anim.SetBool("isJump", true);
             isGround = false;
             firstGroundContact = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isUnderAttack)
-        {
-            isSpeedUp = !isSpeedUp;
         }
 
         if (Input.GetKey(KeyCode.W) && ground.transform.position.y < 2 && isGround && !isLowDash)
@@ -125,11 +108,11 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButton(0) && isGround && !isLowDash)
         {
-            Shoot(true);
+            Shot(true);
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            Shoot(false);
+            Shot(false);
             shotDelay = startShotDelay;
         }
 
@@ -141,6 +124,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             StartCoroutine(Reload());
+        }
+    }
+
+    private void HPControl()
+    {
+        if (hp <= 0)
+        {
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            GameManager.Instance.SetHP(hp);
         }
     }
 
@@ -186,31 +181,7 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    private void SpeedUp()
-    {
-        if (stamina > 0)
-        {
-            if (isSpeedUp)
-            {
-                stamina -= Time.deltaTime * 10;
-                GameManager.Instance.generalSpeed = GameManager.Instance.generalSpeed * speedUp;
-            }
-        }
-        else
-        {
-            isSpeedUp = false;
-        }
-
-        if (stamina < 100 && !isSpeedUp)
-        {
-            stamina += Time.deltaTime * 5;
-            GameManager.Instance.generalSpeed = startGeneralSpeed;
-        }
-
-        GameManager.Instance.SetStamina(stamina);
-    }
-
-    private void Shoot(bool state)
+    private void Shot(bool state)
     {
         if (state && ammoCount > 0 || magazines > 0)
         {
@@ -239,7 +210,7 @@ public class PlayerController : MonoBehaviour
             if (ammoCount > 0)
             {
                 shootEffect.GetComponent<Animator>().SetBool("isShoot", true);
-                audio.PlayOneShot(audioClips[0]);
+                audioSource.PlayOneShot(audioClips[0]);
                 if (EnemyPosition() != Vector2.zero)
                 {
                     RaycastHit2D hitInfo = Physics2D.Raycast(shotPoint.localPosition, EnemyPosition(), LayerMask.GetMask("Enemies"));
@@ -247,9 +218,8 @@ public class PlayerController : MonoBehaviour
                     {
                         if (hitInfo.transform.CompareTag("Enemy"))
                         {
-                            shotLine.SetPosition(0, shotPoint.position);
-                            shotLine.SetPosition(1, hitInfo.transform.position);
-                            hitInfo.collider.gameObject.GetComponent<RatEnemy>().hp -= 10;
+                            ShowShotProjectile(shotPoint.position, hitInfo.transform.position);
+                            hitInfo.collider.gameObject.GetComponent<Enemy>().hp -= 10;
                             StartCoroutine(HitFxPlay(hitFX[0], hitInfo.transform.position));
 
                         }
@@ -257,9 +227,9 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    shotLine.SetPosition(0, shotPoint.position);
-                    shotLine.SetPosition(1, (Vector2)shotPoint.position + Vector2.right * 20);
+                    ShowShotProjectile(shotPoint.position, Vector3.right * 2000);
                 }
+
                 StartCoroutine(ShotLineOnOff());
 
                 ammoCount--;
@@ -273,6 +243,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void ShowShotProjectile(Vector3 startPoint, Vector3 endPoint)
+    {
+        if (transform.position.x < endPoint.x)
+        {
+            shotLine.SetPosition(0, startPoint);
+            shotLine.SetPosition(1, endPoint);
+        }
+    }
+
     IEnumerator Reload()
     {
         if (magazines > 0 && ammoCount < 7)
@@ -280,7 +259,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isShoot", false);
             isReload = true;
             anim.SetBool("isReload", isReload);
-            audio.PlayOneShot(fx[5]);
+            audioSource.PlayOneShot(fx[5]);
             yield return new WaitForSeconds(0.6f);
             isReload = false;
             anim.SetBool("isReload", isReload);
@@ -321,7 +300,7 @@ public class PlayerController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.35f);
             int stepRandom = UnityEngine.Random.Range(0, steps.Count);
-            audio.PlayOneShot(steps[stepRandom]);
+            audioSource.PlayOneShot(steps[stepRandom]);
 
         }
     }
@@ -333,7 +312,7 @@ public class PlayerController : MonoBehaviour
             isGround = true;
             if (firstGroundContact)
             {
-                audio.PlayOneShot(fx[1]);
+                audioSource.PlayOneShot(fx[1]);
             }
             dirtParticles.Play();
             if (stepCor == null)
@@ -345,7 +324,7 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            audio.PlayOneShot(fx[2]);
+            audioSource.PlayOneShot(fx[2]);
             dirtParticles.Stop();
             anim.SetTrigger("isCollision");
             GameManager.Instance.GameOver();
@@ -359,7 +338,7 @@ public class PlayerController : MonoBehaviour
         {
             cupsValue += UnityEngine.Random.Range(1, 15);
             GameManager.Instance.SetCups(cupsValue);
-            audio.PlayOneShot(fx[4]);
+            audioSource.PlayOneShot(fx[4]);
             ObjectPool.Instance.DeleteObject(collision.gameObject);
         }
 
@@ -398,7 +377,7 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetTrigger("lowDash");
         isLowDash = true;
-        audio.PlayOneShot(fx[3]);
+        audioSource.PlayOneShot(fx[3]);
         var main = dirtParticles.main;
         main.maxParticles = 15;
         yield return new WaitForSeconds(1.0f);
@@ -410,13 +389,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private GameObject FindEnemyOnView()
+    {
+        GameObject enemy = GameObject.FindWithTag("Enemy");
+        if (enemy != null)
+        {
+            return enemy;
+        }
+        return null;
+    }
+
     private Vector2 EnemyPosition()
     {
-        if (viewEnemy != null)
+        GameObject enemy = FindEnemyOnView();
+
+        if (enemy != null && enemy.activeInHierarchy)
         {
-            if (Vector2.Distance(transform.position, viewEnemy.transform.position) < 20)
+            if (Vector2.Distance(transform.position, enemy.transform.position) < viewDistance)
             {
-                return viewEnemy.transform.position;
+                return enemy.transform.position;
             }
         }
 

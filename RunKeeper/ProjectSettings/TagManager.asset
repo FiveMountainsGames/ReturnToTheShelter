@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - Player_Leg_F
   - Ammu
+  - EnvironmentLights
   layers:
   - Default
   - TransparentFX

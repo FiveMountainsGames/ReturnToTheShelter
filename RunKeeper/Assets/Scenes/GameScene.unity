@@ -2165,7 +2165,7 @@ GameObject:
   - component: {fileID: 535864368}
   m_Layer: 0
   m_Name: Global Light 2D
-  m_TagString: Untagged
+  m_TagString: EnvironmentLights
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -10870,7 +10870,7 @@ GameObject:
   - component: {fileID: 1930490855}
   m_Layer: 0
   m_Name: SunRay
-  m_TagString: Untagged
+  m_TagString: EnvironmentLights
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295

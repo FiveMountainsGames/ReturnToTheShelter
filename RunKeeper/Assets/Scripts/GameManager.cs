@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.SceneManagement;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] TMP_Text statDistance;
     [SerializeField] TMP_Text statTime;
     [SerializeField] SpawnManager spManager;
+    private List<Light2D> envLights;
     private float endDistance = 3000;
     private float currDistance = 0;
     private double startTimerValue = 300.00;
@@ -54,8 +56,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currGeneralSpeed = generalSpeed;
+        FindAllLights();
+        StartCoroutine(ChangeDayNight());
+
+
         CursorVisible(false);
 
+    }
+
+    void FindAllLights()
+    {
+        /*GameObject[] lights = new GameObject { GameObject.FindGameObjectsWithTag("EnvironmentLights") };
+        for (int i = 0; i < lights.Length; i++)
+        {
+            print(lights[i].name);
+            envLights.Add(lights[i].GetComponent<Light2D>());
+        }*/
     }
 
     public void GameOver()
@@ -120,15 +136,7 @@ public class GameManager : MonoBehaviour
         {
             if (endDistance > currDistance)
             {
-                if (pc.isSpeedUp)
-                {
-                    currDistance += (5 * pc.speedUp * generalSpeed * 60) / 5000;
-                }
-                else
-                {
-                    currDistance += (5 * generalSpeed * 60) / 5000;
-                }
-
+                currDistance += (endDistance / (float)startTimerValue) * Time.deltaTime;
                 progressDistance.value = currDistance;
             }
         }
@@ -140,6 +148,22 @@ public class GameManager : MonoBehaviour
         {
             generalSpeed += Time.deltaTime / 300;
             currGeneralSpeed += Time.deltaTime / 300;
+        }
+    }
+
+    private IEnumerator ChangeDayNight()
+    {
+        yield return new WaitForSeconds(50);
+
+        while (true)
+        {
+            for (int i = 0; i < envLights.Count; i++)
+            {
+                if (envLights[i].intensity < 0.5f)
+                {
+                    envLights[i].intensity -= Time.deltaTime;
+                }
+            }
         }
     }
 

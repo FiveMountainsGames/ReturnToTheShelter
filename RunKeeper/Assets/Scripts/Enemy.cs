@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RatEnemy : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     public int hp = 20;
     private float speed = 10f;
@@ -28,7 +28,6 @@ public class RatEnemy : MonoBehaviour
         {
             transform.parent = null;
         }
-        pc.viewEnemy = this.gameObject;
         transform.localPosition = new Vector3(11.0f, Random.Range(0, 2), 0);
         transform.rotation = Quaternion.Euler(0, 0, 0);
         anim.SetBool("isDead", false);
@@ -62,7 +61,6 @@ public class RatEnemy : MonoBehaviour
 
         if (transform.position.x < -12)
         {
-            pc.viewEnemy = null;
             pc.isUnderAttack = false;
             isHitPlayer = false;
             ObjectPool.Instance.DeleteObject(this.gameObject);
@@ -72,7 +70,6 @@ public class RatEnemy : MonoBehaviour
         {
             transform.parent = null;
             transform.GetComponent<Collider2D>().enabled = false;
-            pc.viewEnemy = null;
             pc.isUnderAttack = false;
             isHitPlayer = false;
             isSetDamage = false;
