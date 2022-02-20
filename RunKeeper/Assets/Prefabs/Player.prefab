@@ -1318,12 +1318,10 @@ MonoBehaviour:
   shotLine: {fileID: 0}
   hitFX:
   - {fileID: 0}
-  viewEnemy: {fileID: 0}
+  flashlight: {fileID: 0}
   hp: 100
   cupsValue: 0
-  speedUp: 1.5
   isGround: 0
-  isSpeedUp: 0
   isUnderAttack: 0
   speed: 3
   ground: {fileID: 0}

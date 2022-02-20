@@ -28,10 +28,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] TMP_Text statDistance;
     [SerializeField] TMP_Text statTime;
     [SerializeField] SpawnManager spManager;
+    [SerializeField] Color nightLightColor;
     private List<Light2D> envLights;
     private float endDistance = 3000;
     private float currDistance = 0;
     private double startTimerValue = 300.00;
+    private bool isNight = false;
     public TMP_Text timer;
 
     public static GameManager Instance
@@ -55,23 +57,19 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        envLights = new List<Light2D>();
         currGeneralSpeed = generalSpeed;
         FindAllLights();
-        StartCoroutine(ChangeDayNight());
-
-
         CursorVisible(false);
-
     }
 
-    void FindAllLights()
+    private void FindAllLights()
     {
-        /*GameObject[] lights = new GameObject { GameObject.FindGameObjectsWithTag("EnvironmentLights") };
+        GameObject[] lights = GameObject.FindGameObjectsWithTag("EnvironmentLights");
         for (int i = 0; i < lights.Length; i++)
         {
-            print(lights[i].name);
             envLights.Add(lights[i].GetComponent<Light2D>());
-        }*/
+        }
     }
 
     public void GameOver()
@@ -89,6 +87,7 @@ public class GameManager : MonoBehaviour
             Timer();
             ProgressDistance();
             GeneralSpeedUp();
+            ChangeDayNight();
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -151,18 +150,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ChangeDayNight()
+    private void ChangeDayNight()
     {
-        yield return new WaitForSeconds(50);
-
-        while (true)
+        if (!isNight && startTimerValue < 150)
         {
             for (int i = 0; i < envLights.Count; i++)
             {
-                if (envLights[i].intensity < 0.5f)
+                if ((envLights[i].intensity > 0 && envLights[i].lightType == Light2D.LightType.Freeform) || (envLights[i].intensity > 0.75f && envLights[i].lightType == Light2D.LightType.Global))
                 {
                     envLights[i].intensity -= Time.deltaTime;
+                    envLights[i].color = Color.Lerp(envLights[i].color, nightLightColor, Time.time / 1000);
                 }
+                /*else
+                {
+                    isNight = true;
+                }*/
             }
         }
     }
