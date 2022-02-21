@@ -67,7 +67,7 @@ public class SpawnManager : MonoBehaviour
             {
                 randomPos = new Vector3(11.0f, Random.Range(minRange, maxRange), 0);
             }
-            if (obstacleRandom == 1)
+            if (obstacleRandom == 1 || obstacleRandom == 4)
             {
                 randomPos = new Vector3(15.0f, 1.33f, 0);
             }
